@@ -4,17 +4,17 @@
 -- script: lua
 -- input:  gamepad
 
-function solid(x,y)
+function isSolid(x,y)
 	local s = mget(x//8,y//8) --get sprite at cell
 	return x<0 or fget(s,0) --return solid flag
 end
 
-function edible(x,y)
+function isEdible(x,y)
 	local s = mget(x//8,y//8)
 	return fget(s,1) --return edible flag
 end
 
-function deadly(x,y)
+function isDeadly(x,y)
 	local s = mget(x//8,y//8)
 	return fget(s,2) --return deadly flag
 end
@@ -33,17 +33,17 @@ function TIC()
 		end
 	end
 
- --check for solid tile on left or right
-	if solid(p.x+p.vx  ,p.y+p.vy  ) or
-	   solid(p.x+p.vx+7,p.y+p.vy  ) or
-	   solid(p.x+p.vx  ,p.y+p.vy+7) or
-	   solid(p.x+p.vx+7,p.y+p.vy+7) then
+	--check for solid tile on left or right
+	if isSolid(p.x+p.vx  ,p.y+p.vy  ) or
+	   isSolid(p.x+p.vx+7,p.y+p.vy  ) or
+	   isSolid(p.x+p.vx  ,p.y+p.vy+7) or
+	   isSolid(p.x+p.vx+7,p.y+p.vy+7) then
 		p.vx=0
 	end
 
- --check for solid tile below player
-	if solid(p.x  ,p.y+p.vy+8) or
-	   solid(p.x+7,p.y+p.vy+8) then
+	--check for solid tile below player
+	if isSolid(p.x  ,p.y+p.vy+8) or
+	   isSolid(p.x+7,p.y+p.vy+8) then
 		p.vy=0
 	else
 		p.vy=p.vy+0.2 --gravity
@@ -54,8 +54,8 @@ function TIC()
 	end
 
 	if p.vy<0 and
-	  (solid(p.x+p.vx  ,p.y+p.vy) or
-	   solid(p.x+p.vx+7,p.y+p.vy)) then
+	  (isSolid(p.x+p.vx  ,p.y+p.vy) or
+	   isSolid(p.x+p.vx+7,p.y+p.vy)) then
 		p.vy=0
 	end
 
@@ -64,7 +64,7 @@ function TIC()
 	p.y=p.y+p.vy
 
 	-- gazelle
-	if edible(p.x+5,p.y) then
+	if isEdible(p.x+5,p.y) then
 		-- eat it
 		mset(p.x//8,p.y//8,0)
 		sfx(3)
@@ -72,7 +72,7 @@ function TIC()
 
 	-- check for deadly things
 	if p.alive then
-		if deadly(p.x+5,p.y) or
+		if isDeadly(p.x+5,p.y) or
 		   p.y>240 then
 		 p.vx=0
 		 p.vy=0
